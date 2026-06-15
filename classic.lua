@@ -10,13 +10,14 @@
 
 local Object = {}
 Object.__index = Object
+Object.__name = "Object"
 
 
 function Object:new()
 end
 
 
-function Object:extend()
+function Object:extend(name)
   local cls = {}
   for k, v in pairs(self) do
     if k:find("__") == 1 then
@@ -24,6 +25,7 @@ function Object:extend()
     end
   end
   cls.__index = cls
+  cls.__name = name or self.__name
   cls.super = self
   setmetatable(cls, self)
   return cls
@@ -54,7 +56,7 @@ end
 
 
 function Object:__tostring()
-  return "Object"
+  return self.__name
 end
 
 
