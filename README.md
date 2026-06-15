@@ -98,6 +98,23 @@ end
 ```
 
 
+## Internals
+
+The module keeps its behaviour through a small set of internal helpers that
+each own one responsibility:
+
+| Helper | Responsibility |
+|---|---|
+| `copyMetamethods` | Copy `__*` keys from parent to child table |
+| `makeClass` | Build a subclass table with the correct metatable chain |
+| `isInstanceOf` | Walk the metatable chain for type checking |
+| `applyMixins` | Inject mixin functions without overwriting existing keys |
+
+These helpers are local to the module and are not part of the public API.
+The public surface (`Object:extend()`, `Object:implement()`, `Object:is()`,
+`Object:new()` and `Class()` call syntax) remains unchanged.
+
+
 ## License
 
 This module is free software; you can redistribute it and/or modify it under
