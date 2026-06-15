@@ -10,13 +10,14 @@
 
 local Object = {}
 Object.__index = Object
+Object.name = "Object"
 
 
 function Object:new()
 end
 
 
-function Object:extend()
+function Object:extend(name)
   local cls = {}
   for k, v in pairs(self) do
     if k:find("__") == 1 then
@@ -25,7 +26,25 @@ function Object:extend()
   end
   cls.__index = cls
   cls.super = self
-  setmetatable(cls, self)
+  cls.name = name
+  -- Each class gets a default __tostring that returns its name for instances.
+  -- Users can override this after extend() for custom stringification.
+  cls.__tostring = function()
+    return name or "Object"
+  end
+  -- A proxy metatable on the class itself handles tostring(ClassName) and
+  -- preserves method inheritance via __index -> parent.
+  -- __call is delegated so that ClassName(...) still constructs instances.
+  local mt = {
+    __index = self,
+    __tostring = function()
+      return name or "Object"
+    end,
+    __call = self.__call
+  }
+  -- Link proxy back into the class chain so is() can walk getmetatable().
+  setmetatable(mt, self)
+  setmetatable(cls, mt)
   return cls
 end
 
@@ -42,6 +61,7 @@ end
 
 
 function Object:is(T)
+  if self == T then return true end
   local mt = getmetatable(self)
   while mt do
     if mt == T then
@@ -64,5 +84,12 @@ function Object:__call(...)
   return obj
 end
 
+
+-- Make the base Object itself printable.
+setmetatable(Object, {
+  __tostring = function()
+    return "Object"
+  end
+})
 
 return Object

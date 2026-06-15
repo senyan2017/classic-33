@@ -19,12 +19,21 @@ additional classes.
 
 ### Creating a new class
 ```lua
-Point = Object:extend()
+Point = Object:extend("Point")
 
 function Point:new(x, y)
   self.x = x or 0
   self.y = y or 0
 end
+```
+
+The `extend()` method accepts an optional name string which is used by
+`tostring()` for debugging:
+```lua
+print(Point)        -- Point
+local p = Point()
+print(p)            -- Point
+print(Object)       -- Object
 ```
 
 ### Creating a new object
@@ -34,7 +43,7 @@ local p = Point(10, 20)
 
 ### Extending an existing class
 ```lua
-Rect = Point:extend()
+Rect = Point:extend("Rect")
 
 function Rect:new(x, y, width, height)
   Rect.super.new(self, x, y)
@@ -53,7 +62,7 @@ print(p:is(Rect)) -- false
 
 ### Using mixins
 ```lua
-PairPrinter = Object:extend()
+PairPrinter = Object:extend("PairPrinter")
 
 function PairPrinter:printPairs()
   for k, v in pairs(self) do
@@ -62,7 +71,7 @@ function PairPrinter:printPairs()
 end
 
 
-Point = Object:extend()
+Point = Object:extend("Point")
 Point:implement(PairPrinter)
 
 function Point:new(x, y)
@@ -77,7 +86,7 @@ p:printPairs()
 
 ### Using static variables
 ```lua
-Point = Object:extend()
+Point = Object:extend("Point")
 Point.scale = 2
 
 function Point:new(x, y)
@@ -96,6 +105,11 @@ function Point:__tostring()
   return self.x .. ", " .. self.y
 end
 ```
+
+Note that when a class defines a custom `__tostring`, it applies to its
+instances. The class itself (e.g. `print(Point)`) always prints the name
+passed to `extend()`. Subclasses do not inherit a parent's custom
+`__tostring` — each class gets a default that prints its own name.
 
 
 ## License
