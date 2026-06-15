@@ -48,7 +48,7 @@ end
 local p = Point(10, 20)
 print(p:is(Object)) -- true
 print(p:is(Point)) -- true
-print(p:is(Rect)) -- false 
+print(p:is(Rect)) -- false
 ```
 
 ### Using mixins
